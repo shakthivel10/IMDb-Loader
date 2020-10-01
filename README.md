@@ -16,7 +16,7 @@ The following files are required: name.basics.tsv.gz, title.basics.tsv.gz, title
 	 ```
 	gradle run --args='<Connection_URL> <DB_Username> <DB_Password> <Path_to_Datasets>'
 	``` 
-	Additionally, the Connection_URL show have 'rewriteBatchedStatements=true' as a URL query parameter.
+	Additionally, the Connection_URL should have 'rewriteBatchedStatements=true' as a URL query parameter.
 
 	 Example: 
 	 ````
