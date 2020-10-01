@@ -11,8 +11,8 @@ The following files are required: name.basics.tsv.gz, title.basics.tsv.gz, title
 
 ## Steps to run the application
 
- 1. Create a database in MySQL where the data will be loaded to. 
- 2. From this project directory run: 
+ 1. Create a database in MySQL where the data will be loaded into. 
+ 2. From the project directory, run: 
 	 ```
 	gradle run --args='<Connection_URL> <DB_Username> <DB_Password> <Path_to_Datasets>'
 	``` 
