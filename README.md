@@ -1,4 +1,5 @@
 
+
   
 
   
@@ -138,8 +139,18 @@ The databases can be tested by verifying the results of the following queries:
 	```
 	1379465
 	```
-
 2. Query:
+	```
+	SELECT title FROM Movie where id=109830;
+	```
+
+	Expected Result:
+
+	```
+	Forrest Gump
+	```
+
+3. Query:
 
 	```
 	SELECT name, birthYear, count(*) as numberOfMoviesActed 
@@ -167,14 +178,28 @@ The databases can be tested by verifying the results of the following queries:
 	```
 	{ "count" : 9706922 }
 	```
-
 2. Aggregation:
+
+	```
+	db.People.aggregate([
+	{$match:{"_id":138}},
+	{$project:{"name":1,"_id":0}}
+	])
+	```
+
+	Expected Result:
+
+	```
+	{ "name" : "Leonardo DiCaprio" }
+	```
+
+3. Aggregation:
 
 	```
 	db.People.aggregate([
 	{$match:{'_id':158}},
 	{$lookup:{from:'Movies',localField:'actor',foreignField:'_id',as:'movieInfo'}},
-	{$project:{name:1,birthYear:1,movieInfo:{$filter:{input:'$movieInfo',cond:{$lt:			['$$this.releaseYear',2019]}}}}},
+	{$project:{name:1,birthYear:1,movieInfo:{$filter:{input:'$movieInfo',cond:{$lt:['$$this.releaseYear',2019]}}}}},
 	{$addFields:{numberOfMovies:{$size:'$movieInfo'}}},
 	{$project:{movieInfo:0,_id:0}}
 	])
