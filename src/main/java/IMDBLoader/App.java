@@ -6,8 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.push;
 
 public class App {
 
@@ -15,11 +26,13 @@ public class App {
     private static String USERNAME;
     private static String PASSWORD;
     private static String PathToDataSets;
+    private static String MongoDatabase;
 
     private static InputStream gzipStream;
     private static BufferedReader br;
     private static String line;
     private static HashMap<String, Integer> map;
+    private static Connection conn;
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -27,15 +40,16 @@ public class App {
         USERNAME = args[1];
         PASSWORD = args[2];
         PathToDataSets = args[3];
-        String MongoConnString = args[4] ;
-        String MongoDatabase = args[5];
+        MongoDatabase = args[4];
 
         int counter = 0;
 
         long start = System.currentTimeMillis();
         long startCommon = start;
 
-        Connection conn = null;
+        System.out.println("Starting MySQL database insertions ");
+
+
         PreparedStatement st, st2, st3, st4, st5, st6;
 
         try {
@@ -417,6 +431,147 @@ public class App {
                     .println("ActedIn, DirectedBy, WrittenBy, ComposedBy, EditedBy and ProducedBy Tables loaded in "
                             + (float) (System.currentTimeMillis() - start) / 1000 +" second(s)");
 
+
+            System.out.println("Starting MongoDB database Insertions");
+
+            MongoClient client = new MongoClient();
+            MongoDatabase mongoDatabase = client.getDatabase(MongoDatabase);
+
+            ResultSet rs;
+
+
+            // Create collection People and load data from MySQL database
+
+            MongoCollection<Document> PeopleCollection = mongoDatabase.getCollection("People");
+
+            st = conn.prepareStatement("select id, name, birthYear, deathYear from Person");
+            st.setFetchSize(4096);
+
+            rs = st.executeQuery();
+
+            List<Document> documentList =  new ArrayList<>();
+            List<Integer> emptyList = new ArrayList<>();
+
+            Document document;
+
+            counter = 0;
+
+            while (rs.next()) {
+
+                document = new Document();
+                document.append("_id", rs.getInt("id"));
+                document.append("name", rs.getString("name"));
+
+                // true birth and death years are not 0
+
+                if ( rs.getInt("birthYear") != 0) {
+                    document.append("birthYear", rs.getInt("birthYear"));
+                }
+
+                if ( rs.getInt("deathYear") != 0) {
+                    document.append("deathYear", rs.getInt("deathYear"));
+                }
+
+                document.append("actor",emptyList);
+                document.append("composer",emptyList);
+                document.append("director",emptyList);
+                document.append("editor",emptyList);
+                document.append("producer",emptyList);
+                document.append("writer",emptyList);
+
+                documentList.add(document);
+
+                if(++counter%4096 == 0) {
+                    PeopleCollection.insertMany(documentList);
+                    documentList = new ArrayList<>();
+                }
+            }
+
+            if(documentList.size()!=0) {
+                PeopleCollection.insertMany(documentList);
+            }
+
+            st.close();
+            rs.close();
+            documentList = null;
+
+            System.out.println("People Collection Loaded in : "+(float)(System.currentTimeMillis() - start) / 1000 +" second(s)");
+
+            // Create collection Movies and load data from MySQL database
+
+            start = System.currentTimeMillis();
+
+            st = conn.prepareStatement("select id, title, releaseYear, runtime, rating, numberOfVotes from Movie");
+            st.setFetchSize(4096);
+
+            rs = st.executeQuery();
+
+            MongoCollection<Document> MoviesCollection = mongoDatabase.getCollection("Movies");
+
+            emptyList = new ArrayList<>();
+            documentList =  new ArrayList<>();
+            counter = 0;
+
+            while (rs.next()) {
+
+                document = new Document();
+                document.append("_id", rs.getInt("id"));
+                document.append("title", rs.getString("title"));
+
+                if ( rs.getInt("releaseYear") != 0) {
+                    document.append("releaseYear", rs.getInt("releaseYear"));
+                }
+
+                if ( rs.getString("runtime") != null) {
+                    document.append("runtime", rs.getInt("runtime"));
+                }
+
+                if ( rs.getString("rating") != null) {
+                    document.append("rating", rs.getFloat("rating"));
+                }
+
+                if ( rs.getString("numberOfVotes") != null) {
+                    document.append("numberOfVotes", rs.getInt("numberOfVotes"));
+                }
+
+                document.append("genres", emptyList);
+                documentList.add(document);
+
+                if(++counter%4096 == 0) {
+                    MoviesCollection.insertMany(documentList);
+                    documentList = new ArrayList<>();
+                }
+            }
+
+            if(documentList.size()!=0) {
+                MoviesCollection.insertMany(documentList);
+            }
+
+            st.close();
+            rs.close();
+            documentList = null;
+
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "ActedIn", "actor");
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "ComposedBy", "composer");
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "DirectedBy", "director");
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "EditedBy", "editor");
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "ProducedBy", "producer");
+            pushSQLAssociationsToMongoMoviesCollection(PeopleCollection, "WrittenBy", "writer");
+
+            st = conn.prepareStatement("select t1.movieId, t2.name from HasGenre as t1 join genre as t2 on t1.genreId = t2.id");
+            st.setFetchSize(8192);
+
+            rs = st.executeQuery();
+
+            while (rs.next()) {
+                MoviesCollection.updateOne(eq("_id",rs.getInt("t1.movieId")),push("genres", rs.getString("t2.name")));
+            }
+
+            st.close();
+            rs.close();
+
+            System.out.println("Movies Collection Loaded in : "+(float)(System.currentTimeMillis() - start) / 1000 +" second(s)");
+
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
@@ -432,5 +587,18 @@ public class App {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void pushSQLAssociationsToMongoMoviesCollection(MongoCollection PeopleCollection, String SQLAssociationTableName, String mongoArrayName) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("select * from "+ SQLAssociationTableName);
+        st.setFetchSize(8192);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+            PeopleCollection.updateOne(eq("_id",rs.getInt("personId")),push(mongoArrayName,rs.getInt("movieId")));
+        }
+
+        st.close();
+        rs.close();
     }
 }

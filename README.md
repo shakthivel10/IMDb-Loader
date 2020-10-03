@@ -13,12 +13,14 @@ The following files are required: name.basics.tsv.gz, title.basics.tsv.gz, title
 
  1. Create a database in MySQL where the data will be loaded into. 
  2. From the project directory, run: 
+ 
+
 	 ```
-	gradle run --args='<Connection_URL> <DB_Username> <DB_Password> <Path_to_Datasets>'
+	gradle run --args='<MySQL_Connection_URL> <MySQL_Username> <MySQL_Password> <Path_to_Datasets> <MongoDB_Databasename>'  
 	``` 
-	Additionally, the Connection_URL should have 'rewriteBatchedStatements=true' as a URL query parameter.
+	 Note: The MySQL_Connection_URL should have the following as URL query parameters: rewriteBatchedStatements=true&useCursorFetch=true
 
 	 Example: 
 	 ````
-	gradle run --args='jdbc:mysql://localhost:3306/imdb?rewriteBatchedStatements=true root password /Users/$USER/Downloads';
+	gradle run --args='jdbc:mysql://localhost:3306/imdb?rewriteBatchedStatements=true&useCursorFetch=true root password /Users/$USER/Downloads/ imdb'
 ````
