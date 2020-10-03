@@ -11,7 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 public class App {
 
-    private static String CONN_STRING;
+    private static String ConnString;
     private static String USERNAME;
     private static String PASSWORD;
     private static String PathToDataSets;
@@ -23,10 +23,12 @@ public class App {
 
     public static void main(String[] args) throws InterruptedException {
 
-        CONN_STRING = args[0];
+        ConnString = args[0];
         USERNAME = args[1];
         PASSWORD = args[2];
         PathToDataSets = args[3];
+        String MongoConnString = args[4] ;
+        String MongoDatabase = args[5];
 
         int counter = 0;
 
@@ -38,7 +40,7 @@ public class App {
 
         try {
 
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(ConnString, USERNAME, PASSWORD);
             conn.setAutoCommit(false);
 
             // Create and load data from name.basics.tsv.gz into Person Table
