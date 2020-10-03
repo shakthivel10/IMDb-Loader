@@ -152,11 +152,11 @@ The databases can be tested by verifying the results of the following queries:
 	WHERE p.id=158 and m.releaseYear < 2019;
 	```
 
-Expected Result:
+	Expected Result:
 
-```
-'Tom Hanks',1956,79
-```
+	```
+	'Tom Hanks',1956,79
+	```
 
 #### MongoDB
 
