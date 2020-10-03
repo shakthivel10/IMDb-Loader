@@ -118,11 +118,13 @@ The databases can be tested by verifying the results of the following queries:
 	```
 3. Aggregation:
 	```
-	db.People.aggregate([{$match:{'_id':158}},
+	db.People.aggregate([
+	{$match:{'_id':158}},
 	{$lookup:{from:'Movies',localField:'actor',foreignField:'_id',as:'movieInfo'}},
 	{$project:{name:1,birthYear:1,movieInfo:{$filter:{input:'$movieInfo',cond:{$lt:['$$this.releaseYear',2019]}}}}},
 	{$addFields:{numberOfMovies:{$size:'$movieInfo'}}},
-	{$project:{movieInfo:0,_id:0}}])	
+	{$project:{movieInfo:0,_id:0}}
+	])	
 	```
 	Expected Result:
 	```
