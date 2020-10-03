@@ -4,7 +4,7 @@
 # IMDb-Loader
 
 This project is a Java application that loads the Internet Movie Database (IMDb) into MySQL and MongoDB databases.
-
+  
 ## Datasets
 
 The datasets used are available at https://datasets.imdbws.com
@@ -70,3 +70,61 @@ Example:
 ````
 gradle run --args='jdbc:mysql://localhost:3306/imdb?rewriteBatchedStatements=true&useCursorFetch=true root password /Users/$USER/Downloads/ imdb'
 ````
+
+## Testing
+The databases can be tested by verifying the results of the following queries:
+
+#### MySQL
+1. Query:
+	```
+	SELECT COUNT(*) FROM Person;
+	```
+	Expected Result:
+	```
+	9706922
+	```
+2. Query:
+	```
+	SELECT COUNT(*) FROM Movie;
+	```
+	Expected Result:
+	```
+	1379465
+	```
+3. Query: 
+	```
+	SELECT name, birthYear, count(*) as numberOfMoviesActed FROM Person as p JOIN ActedIn as a JOIN Movie as m on p.id = a.personId and a.movieId = m.id WHERE p.id=158 and m.releaseYear < 2019;
+	```
+	Expected Result:
+	```
+	'Tom Hanks',1956,79
+	```
+#### MongoDB
+1. Aggregation:
+	```
+	db.People.aggregate([{ $count: "count" }])
+	```
+	Expected Result:
+	```
+	{ "count" : 9706922 }
+	```
+2. Aggregation:
+	```
+	db.Movies.aggregate([{ $count: "count" }])
+	```
+	Expected Result:
+	```
+	{ "count" : 1379465 }
+	```
+3. Aggregation:
+	```
+	db.People.aggregate([{$match:{'_id':158}},
+	{$lookup:{from:'Movies',localField:'actor',foreignField:'_id',as:'movieInfo'}},
+	{$project:{name:1,birthYear:1,movieInfo:{$filter:{input:'$movieInfo',cond:{$lt:['$$this.releaseYear',2019]}}}}},
+	{$addFields:{numberOfMovies:{$size:'$movieInfo'}}},
+	{$project:{movieInfo:0,_id:0}}])	
+	```
+	Expected Result:
+	```
+	{ "name" : "Tom Hanks", "birthYear" : 1956, "numberOfMovies" : 79 }
+	```
