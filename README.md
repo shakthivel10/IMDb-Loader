@@ -83,7 +83,7 @@ We use the following schema in MongoDB:
 
   
 
-## Steps to run the application
+## To run the application
 
   
 
@@ -109,9 +109,7 @@ Note: The MySQL_Connection_URL should have the following as URL query parameters
 
   
 
-  
-
-Example:
+For Example,
 
   
 
