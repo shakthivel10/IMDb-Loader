@@ -25,8 +25,6 @@ The following files are required: name.basics.tsv.gz, title.basics.tsv.gz, title
 
 We use the following database schema in MySQL, primary keys are in bold:
 
-  
-
 - Person (**id**, name, birthYear, deathYear)
 
 - Movie (**id**, title, releaseYear, runtime, rating, numberOfVotes)
@@ -35,45 +33,45 @@ We use the following database schema in MySQL, primary keys are in bold:
 
 - HasGenre (**genreId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - ActedIn (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - ComposedBy (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - DirectedBy (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - EditedBy (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - ProducedBy (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 - WrittenBy (**personId**, **movieId**)
 
-- personId references Person(id)
+- **personId** references Person(**id**)
 
-- movieId references Movie(id)
+- **movieId** references Movie(**id**)
 
 We use the following schema in MongoDB:
 
