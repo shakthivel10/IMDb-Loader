@@ -129,7 +129,7 @@ The databases can be tested by verifying the results of the following queries:
 #### MySQL
 
 
-1. Query:
+1. Query: (finds the number of movies loaded in the database)
 	```
 	SELECT COUNT(*) FROM Movie;
 	```
@@ -139,7 +139,7 @@ The databases can be tested by verifying the results of the following queries:
 	```
 	1379465
 	```
-2. Query:
+2. Query: (finds the name of movie with id=109830)
 	```
 	SELECT title FROM Movie where id=109830;
 	```
@@ -150,7 +150,7 @@ The databases can be tested by verifying the results of the following queries:
 	Forrest Gump
 	```
 
-3. Query:
+3. Query: (finds the name, birth year and number of movies acted before 2019 by person with id=158)
 
 	```
 	SELECT name, birthYear, count(*) as numberOfMoviesActed 
@@ -167,7 +167,7 @@ The databases can be tested by verifying the results of the following queries:
 
 #### MongoDB
 
-1. Aggregation:
+1. Aggregation: (finds the number of people in the database)
 
 	```
 	db.People.aggregate([{ $count: "count" }])
@@ -178,7 +178,7 @@ The databases can be tested by verifying the results of the following queries:
 	```
 	{ "count" : 9706922 }
 	```
-2. Aggregation:
+2. Aggregation: (finds the name of person with id=138)
 
 	```
 	db.People.aggregate([
@@ -193,7 +193,7 @@ The databases can be tested by verifying the results of the following queries:
 	{ "name" : "Leonardo DiCaprio" }
 	```
 
-3. Aggregation:
+3. Aggregation: (finds the name, birth year and number of movies acted before 2019 by person with id=158)
 
 	```
 	db.People.aggregate([
