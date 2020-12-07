@@ -150,7 +150,7 @@ The databases can be tested by verifying the results of the following queries:
 	Forrest Gump
 	```
 
-3. Query: (finds the name, birth year and number of movies acted before 2019 by person with id=158)
+3. Query: (finds the name, birth year and number of movies acted in, before 2019, by person with id=158)
 
 	```
 	SELECT name, birthYear, count(*) as numberOfMoviesActed 
@@ -193,7 +193,7 @@ The databases can be tested by verifying the results of the following queries:
 	{ "name" : "Leonardo DiCaprio" }
 	```
 
-3. Aggregation: (finds the name, birth year and number of movies acted before 2019 by person with id=158)
+3. Aggregation: (finds the name, birth year and number of movies acted in, before 2019, by person with id=158)
 
 	```
 	db.People.aggregate([
