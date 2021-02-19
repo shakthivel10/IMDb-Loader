@@ -129,9 +129,9 @@ The databases can be tested by verifying the results of the following queries:
 #### MySQL
 
 
-1. Query: (finds the number of movies loaded in the database)
+1. Query: (finds the number of movies loaded in the database that were released before 2020)
 	```
-	SELECT COUNT(*) FROM Movie;
+	SELECT COUNT(*) FROM Movie WHERE releaseYear < 2020;
 	```
 
 	Expected Result:
