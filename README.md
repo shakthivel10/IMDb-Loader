@@ -178,19 +178,19 @@ The databases can be tested by verifying the results of the following queries:
 	```
 	{ "count" : 9706922 }
 	```
-2. Aggregation: (finds the name of person with id=138)
+2. Aggregation: (finds the name of movie with id=109830)
 
 	```
-	db.People.aggregate([
-	{$match:{"_id":138}},
-	{$project:{"name":1,"_id":0}}
+	db.Movies.aggregate([ 
+	{$match:{"_id":109830}}, 
+	{$project:{"title":1,"_id":0}} 
 	])
 	```
 
 	Expected Result:
 
 	```
-	{ "name" : "Leonardo DiCaprio" }
+	{ "title" : "Forrest Gump" }
 	```
 
 3. Aggregation: (finds the name, birth year and number of movies acted by person with id=158 before 2019)
